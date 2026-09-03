@@ -87,7 +87,22 @@ class EventService {
      * @return array{0:int,1:String}
      */
     private function withdraw(int $origin, float $amount): array{
-        
+        $accountData = $this->getAccountData($origin);
+        if(empty($accountData)){
+            return [404,"0"];
+        }
+        if(($accountData["balance"] - $amount) < 0){
+            return $this->errorResponse(400,"Failed to withdraw amount. Insufficient balance.");
+        }
+
+        $withdrawResult = $this->removeAmountToBalance($accountData,$amount);
+        if(empty($withdrawResult)){
+            return $this->errorResponse(400,"Failed to withdraw amount.");
+        }
+        $response = [
+            "origin" => $withdrawResult
+        ];
+        return [201,json_encode($response)];
     }
 
     /**
@@ -121,6 +136,21 @@ class EventService {
     private function addAmountToBalance(array $accountData,float $amount): ?array{
         $accountId = $accountData["id"];
         $accountData["balance"] += $amount; 
+        $result = apcu_store("account:{$accountId}",$accountData,0);
+        if($result){
+            return $accountData;
+        }
+
+        return null;
+    }
+
+    /**
+     * @param array{id:int,balance:float}
+     * @return array{id:int,balance:float}|null
+     */
+    private function removeAmountToBalance(array $accountData,float $amount): ?array{
+        $accountId = $accountData["id"];
+        $accountData["balance"] -= $amount; 
         $result = apcu_store("account:{$accountId}",$accountData,0);
         if($result){
             return $accountData;
