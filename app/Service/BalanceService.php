@@ -10,17 +10,15 @@ class BalanceService {
     /**
     * @return array{0: int, 1: string}
     */
-    public static function checkBalance(Request $request): array{
-        // var_dump(filter_var("3",FILTER_VALIDATE_INT));die;
-
+    public function checkBalance(Request $request): array{
         $params = $request->getQueryParams();
         if(!isset($params["account_id"])){
             return [404,"0"];
         }
 
-        if(is_int(filter_var($params["account_id"],FILTER_VALIDATE_INT)) && (int)$params["account_id"] > 0){
-            $account_id = (int)$params["account_id"];
-            $accountData = self::getAccountData($account_id);
+        if($this->validateId($params["account_id"])){
+            $accountId = (int)$params["account_id"];
+            $accountData = $this->getAccountData($accountId);
             if(empty($accountData)){
                 return [404,"0"];
             }

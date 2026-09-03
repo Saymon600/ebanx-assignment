@@ -25,19 +25,21 @@ class EventController {
     }
 
     public function balance(Request $request, Response $response): Response {
-        [$responseCode,$responseBody] = BalanceService::checkBalance($request);
+        $balanceService = new BalanceService();
+        [$responseCode,$responseBody] = $balanceService->checkBalance($request);
         $response->getBody()->write($responseBody);
         return $response 
             ->withStatus($responseCode);
     }
 
     public function event(Request $request, Response $response): Response {
-        [$responseCode,$responseBody] = EventService::processEvent($request);
+        $eventService = new EventService();
+        [$responseCode,$responseBody] = $eventService->processEvent($request);
         $response->getBody()->write($responseBody);
 
-        if($responseCode == 201){
+        if(in_array($responseCode,[201,400])){
             return $response 
-                ->withStatus(201)
+                ->withStatus($responseCode)
                 ->withHeader('Content-Type','application/json');
         }
 
