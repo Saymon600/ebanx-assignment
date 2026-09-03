@@ -138,8 +138,8 @@ class EventService {
         }
         
         $response = [
-            "destination" => $transferRemoveResult,
-            "origin" => $transferAddResult
+            "origin" => $transferRemoveResult,
+            "destination" => $transferAddResult,
         ];
         return [201,json_encode($response)];
     }
@@ -149,7 +149,7 @@ class EventService {
      */
     private function createAccount(int $accountId): ?array{
         $accountData = [
-            "id" => $accountId,
+            "id" => (String)$accountId,
             "balance" => 0
         ];
 
@@ -167,7 +167,8 @@ class EventService {
      */
     private function addAmountToBalance(array $accountData,float $amount): ?array{
         $accountId = $accountData["id"];
-        $accountData["balance"] += $amount; 
+        $total = $accountData["balance"] += $amount; 
+        $accountData["balance"] = (float)number_format($total,2,".","");
         $result = apcu_store("account:{$accountId}",$accountData,0);
         if($result){
             return $accountData;
@@ -182,7 +183,8 @@ class EventService {
      */
     private function removeAmountToBalance(array $accountData,float $amount): ?array{
         $accountId = $accountData["id"];
-        $accountData["balance"] -= $amount; 
+        $total = $accountData["balance"] -= $amount; 
+        $accountData["balance"] = (float)number_format($total,2,".","");
         $result = apcu_store("account:{$accountId}",$accountData,0);
         if($result){
             return $accountData;

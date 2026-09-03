@@ -30,7 +30,7 @@ class BalanceService {
                 return [404,"0"];
             }
 
-            $accountBalance = (String)$accountData["balance"];
+            $accountBalance = number_format($accountData["balance"],2,".","");
             return [200,$accountBalance];
         }
 
