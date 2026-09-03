@@ -74,7 +74,7 @@ class EventService {
 
         $depositResult = $this->addAmountToBalance($accountData,$amount);
         if(empty($depositResult)){
-            return $this->errorResponse(400,"Failed to add amount to account.");
+            return $this->errorResponse(400,"Failed to add amount to account.  Could not store destination data.");
         }
         
         $response = [
@@ -97,7 +97,7 @@ class EventService {
 
         $withdrawResult = $this->removeAmountToBalance($accountData,$amount);
         if(empty($withdrawResult)){
-            return $this->errorResponse(400,"Failed to withdraw amount.");
+            return $this->errorResponse(400,"Failed to withdraw amount. Could not store origin data.");
         }
         $response = [
             "origin" => $withdrawResult
@@ -109,7 +109,39 @@ class EventService {
      * @return array{0:int,1:String}
      */
     private function transfer(int $destination, int $origin, float $amount): array{
+        $originData = $this->getAccountData($origin);
+        if(empty($originData)){
+            return [404,"0"];
+        }
         
+        $destinationData = $this->getAccountData($destination);
+        if(empty($destinationData)){
+            $createResult = $this->createAccount($destination);
+            if(!$createResult){
+                return $this->errorResponse(400,"Could not create a new account.");
+            }
+            $destinationData = $createResult;
+        }
+
+        if(($originData["balance"] - $amount) < 0){
+            return $this->errorResponse(400,"Failed to transfer amount. Insufficient balance.");
+        }
+
+        $transferRemoveResult = $this->removeAmountToBalance($originData,$amount);
+        if(empty($transferRemoveResult)){
+            return $this->errorResponse(400,"Failed to transfer amount. Could not store origin data.");
+        }
+
+        $transferAddResult = $this->addAmountToBalance($destinationData,$amount);
+        if(empty($transferAddResult)){
+            return $this->errorResponse(400,"Failed to add amount to account.  Could not store destination data.");
+        }
+        
+        $response = [
+            "destination" => $transferRemoveResult,
+            "origin" => $transferAddResult
+        ];
+        return [201,json_encode($response)];
     }
 
     /**

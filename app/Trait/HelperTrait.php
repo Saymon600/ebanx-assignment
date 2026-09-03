@@ -16,7 +16,6 @@ trait HelperTrait {
     }
     
     public function validateId($var): bool{
-        //An ID must never be negative.
         if(is_int(filter_var($var,FILTER_VALIDATE_INT)) && (int)$var > 0){
             return true;
         }
@@ -25,7 +24,6 @@ trait HelperTrait {
     }
 
     public function validateAmount($var): bool{
-        //Amount must never be negative.
         if(is_float(filter_var($var,FILTER_VALIDATE_FLOAT)) && (float)$var > 0){
             return true;
         }
