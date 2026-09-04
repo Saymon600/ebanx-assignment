@@ -14,6 +14,23 @@ trait HelperTrait {
 
         return null;
     }
+
+    /**
+     * @return array{id:int,balance:float}|null
+     */
+    public function createAccount(int $accountId): ?array{
+        $accountData = [
+            "id" => (String)$accountId,
+            "balance" => 0
+        ];
+
+        $result = apcu_store("account:{$accountId}",$accountData,0);
+        if($result){
+            return $accountData;
+        }
+
+        return null;
+    }
     
     public function validateId($var): bool{
         if(is_int(filter_var($var,FILTER_VALIDATE_INT)) && (int)$var > 0){

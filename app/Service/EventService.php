@@ -145,23 +145,6 @@ class EventService {
     }
 
     /**
-     * @return array{id:int,balance:float}|null
-     */
-    private function createAccount(int $accountId): ?array{
-        $accountData = [
-            "id" => (String)$accountId,
-            "balance" => 0
-        ];
-
-        $result = apcu_store("account:{$accountId}",$accountData,0);
-        if($result){
-            return $accountData;
-        }
-
-        return null;
-    }
-
-    /**
      * @param array{id:int,balance:float}
      * @return array{id:int,balance:float}|null
      */

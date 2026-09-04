@@ -23,13 +23,6 @@ class BalanceService {
                 return [404,"0"];
             }
 
-            if(
-                !isset($accountData["balance"]) ||
-                !is_float(filter_var($accountData["balance"],FILTER_VALIDATE_FLOAT))
-            ){
-                return [404,"0"];
-            }
-
             $accountBalance = number_format($accountData["balance"],2,".","");
             return [200,$accountBalance];
         }
