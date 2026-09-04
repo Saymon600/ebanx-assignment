@@ -92,7 +92,7 @@ class EventService {
             return [404,"0"];
         }
         if(($accountData["balance"] - $amount) < 0){
-            return $this->errorResponse(400,"Failed to withdraw amount. Insufficient balance.");
+            return $this->errorResponse(422,"Failed to withdraw amount. Insufficient balance.");
         }
 
         $withdrawResult = $this->removeAmountToBalance($accountData,$amount);
@@ -124,7 +124,7 @@ class EventService {
         }
 
         if(($originData["balance"] - $amount) < 0){
-            return $this->errorResponse(400,"Failed to transfer amount. Insufficient balance.");
+            return $this->errorResponse(422,"Failed to transfer amount. Insufficient balance.");
         }
 
         $transferRemoveResult = $this->removeAmountToBalance($originData,$amount);
@@ -134,7 +134,7 @@ class EventService {
 
         $transferAddResult = $this->addAmountToBalance($destinationData,$amount);
         if(empty($transferAddResult)){
-            return $this->errorResponse(400,"Failed to add amount to account.  Could not store destination data.");
+            return $this->errorResponse(400,"Failed to add amount to account. Could not store destination data.");
         }
         
         $response = [

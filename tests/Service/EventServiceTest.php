@@ -138,7 +138,7 @@ class EventServiceTest extends TestCase {
         $request = $this->createRequestWithBody('{"type":"withdraw","origin":50,"amount":20}');
 
         [$statusCode, $body] = $this->service->processEvent($request);
-        $this->assertSame(400, $statusCode);
+        $this->assertSame(422, $statusCode);
         $this->assertStringContainsString('Insufficient balance', $body);
     }
 
@@ -203,7 +203,7 @@ class EventServiceTest extends TestCase {
         $request = $this->createRequestWithBody('{"type":"transfer","origin":100,"destination":200,"amount":10}');
 
         [$statusCode, $body] = $this->service->processEvent($request);
-        $this->assertSame(400, $statusCode);
+        $this->assertSame(422, $statusCode);
         $this->assertStringContainsString('Insufficient balance', $body);
     }
 
