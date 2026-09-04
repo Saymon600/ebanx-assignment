@@ -37,7 +37,7 @@ class EventController {
         [$responseCode,$responseBody] = $eventService->processEvent($request);
         $response->getBody()->write($responseBody);
 
-        if(in_array($responseCode,[201,400])){
+        if(in_array($responseCode,[201,400,422])){
             return $response 
                 ->withStatus($responseCode)
                 ->withHeader('Content-Type','application/json');
